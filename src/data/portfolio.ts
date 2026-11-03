@@ -33,6 +33,7 @@ export const projects: Project[] = [
     problem: 'Present varied services and portfolio material in a coherent structure without overwhelming visitors.',
     contribution: 'I worked on responsive pages, reusable interface components, navigation, and the organization of service and portfolio content.',
     features: ['Responsive page layouts', 'Reusable content components', 'Service and portfolio presentation', 'Clear navigation and content hierarchy'],
+    liveUrl: 'https://ekdrishti.com/',
   },
   {
     id: 'nexus', title: 'NEXUS', eyebrow: 'Independent project · Analytics & forecasting', type: 'public', cover: 'nexus',

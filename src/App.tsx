@@ -9,6 +9,7 @@ function App() {
   const publicProjects = projects.filter(project => project.type === 'public')
   const confidentialProjects = projects.filter(project => project.type === 'confidential')
   const closeDialog = useCallback(() => setSelectedProject(null), [])
+  const resumeMailto = `mailto:${profile.email}?subject=${encodeURIComponent('Resume request')}&body=${encodeURIComponent(`Hi Riya,\n\nI came across your portfolio and would like to request a copy of your resume.\n\nThank you.`)}`
 
   const copyEmail = async () => {
     try { await navigator.clipboard.writeText(profile.email); setCopied(true); window.setTimeout(() => setCopied(false), 2200) }
@@ -33,7 +34,7 @@ function App() {
             <div className="hero-copy">
               <h1>Full stack.<br /><em>Thoughtfully<br />built.</em></h1>
               <p>{profile.intro}</p>
-              <div className="hero-actions"><a className="primary-action" href="#work">Explore my work <span aria-hidden="true">↓</span></a><a className="resume-link" href={`mailto:${profile.email}?subject=Resume request`}>Request resume ↗</a></div>
+              <div className="hero-actions"><a className="primary-action" href="#work">Explore my work <span aria-hidden="true">↓</span></a><a className="resume-link" href={resumeMailto}>Request resume ↗</a></div>
             </div>
             <div className="stack-board" role="img" aria-label="Three connected layers of my work: interface, application and data">
               <p>A little design. A lot of logic.</p>
@@ -76,7 +77,7 @@ function App() {
           <h2>Have a thoughtful project<br />in mind? <em>Let’s talk.</em></h2>
           <p className="contact-copy">I’m always open to a good conversation about product ideas, web experiences and full-stack work.</p>
           <div className="contact-actions"><a className="primary-action light" href={`mailto:${profile.email}`}>Write to me <span aria-hidden="true">↗</span></a><button onClick={copyEmail} className="secondary-action" aria-live="polite">{copied ? 'Email copied' : 'Copy email'}</button></div>
-          <div className="contact-meta"><a href={`mailto:${profile.email}?subject=Resume request`}>Request resume</a><span>{profile.location}</span><span>{profile.email}</span></div>
+          <div className="contact-meta"><a href={resumeMailto}>Request resume ↗</a><span>{profile.location}</span><a href={`mailto:${profile.email}`}>{profile.email} ↗</a></div>
         </section>
       </main>
       <footer><a className="wordmark" href="#top">riya kadam<span>.</span></a><p>Designed and built with care.</p><p>© {new Date().getFullYear()} {profile.shortName}</p></footer>

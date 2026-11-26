@@ -1,86 +1,70 @@
 import { useCallback, useState } from 'react'
-import { experience, profile, projects, skills, type Project } from './data/portfolio'
-import { ProjectCard } from './components/ProjectCard'
+import { profile, projects, type Project } from './data/portfolio'
 import { ProjectDialog } from './components/ProjectDialog'
+import { ErpWorkflow } from './components/ErpWorkflow'
+import { SpotlightCard } from './components/SpotlightCard'
+import { CinematicHero } from './components/CinematicHero'
+import { ProjectGallery } from './components/ProjectGallery'
+import { DeveloperWorkspace } from './components/DeveloperWorkspace'
 
 function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [copied, setCopied] = useState(false)
-  const publicProjects = projects.filter(project => project.type === 'public')
-  const confidentialProjects = projects.filter(project => project.type === 'confidential')
   const closeDialog = useCallback(() => setSelectedProject(null), [])
-  const resumeMailto = `mailto:${profile.email}?subject=${encodeURIComponent('Resume request')}&body=${encodeURIComponent(`Hi Riya,\n\nI came across your portfolio and would like to request a copy of your resume.\n\nThank you.`)}`
+  const resumeMailto = `mailto:${profile.email}?subject=${encodeURIComponent('Resume request')}&body=${encodeURIComponent('Hi Riya,\n\nI came across your portfolio and would like to request a copy of your resume.\n\nThank you.')}`
+  const supportingProjects = projects.filter(project => ['ekdrishti-web', 'nexus', 'bitewise', 'hr-workflow'].includes(project.id))
+  const enterpriseProject = projects.find(project => project.id === 'enterprise-operations')!
+  const galleryProjects = [{ ...enterpriseProject, title: 'Enterprise ERP', eyebrow: 'Featured · Enterprise workflow' }, ...supportingProjects]
 
   const copyEmail = async () => {
-    try { await navigator.clipboard.writeText(profile.email); setCopied(true); window.setTimeout(() => setCopied(false), 2200) }
-    catch { window.location.href = `mailto:${profile.email}` }
+    try {
+      await navigator.clipboard.writeText(profile.email)
+    } catch {
+      const input = document.createElement('textarea')
+      input.value = profile.email
+      input.setAttribute('readonly', '')
+      input.style.position = 'fixed'
+      input.style.opacity = '0'
+      document.body.appendChild(input)
+      input.select()
+      document.execCommand('copy')
+      input.remove()
+    }
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 2200)
   }
 
   return (
     <>
       <a className="skip-link" href="#main">Skip to content</a>
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label="Riya Kadam, home">riya kadam<span>.</span></a>
-        <nav aria-label="Primary navigation">
-          <span className="menu-label" aria-hidden="true">Menu</span>
-          <a href="#work">Work</a><a href="#about">About</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
-        </nav>
+        <a className="wordmark" href="#top" aria-label="Riya Kadam, home">Riya Kadam<span>.</span></a>
+        <nav aria-label="Primary navigation"><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
+        <a className="header-contact" href={`mailto:${profile.email}`}>Let’s talk</a>
       </header>
 
       <main id="main">
-        <section className="hero" id="top">
-          <div className="hero-kicker"><span>{profile.role} · Mumbai</span><span>Available for thoughtful work</span></div>
-          <div className="hero-layout">
-            <div className="hero-copy">
-              <h1>Full stack.<br /><em>Thoughtfully<br />built.</em></h1>
-              <p>{profile.intro}</p>
-              <div className="hero-actions"><a className="primary-action" href="#work">Explore my work <span aria-hidden="true">↓</span></a><a className="resume-link" href={resumeMailto}>Request resume ↗</a></div>
+        <CinematicHero resumeMailto={resumeMailto} />
+        <ProjectGallery projects={galleryProjects} onOpen={setSelectedProject} />
+
+        <section className="section erp-case-section" id="erp-case-study">
+          <header className="section-heading"><p className="eyebrow">Featured case study</p><h2>A workflow that moves<br /><em>with the reader.</em></h2></header>
+          <SpotlightCard className="erp-feature" >
+            <div className="erp-header"><div><p className="eyebrow">Signature case study · Confidential employer work</p><h3>Enterprise ERP</h3></div><div className="erp-contribution"><p>A connected operations platform where frontend actions, backend rules, and database-backed workflows move work from sales into delivery.</p><a className="erp-case-link" href="#erp-details">Explore the case study</a></div></div>
+            <ErpWorkflow />
+            <div className="case-study-grid" id="erp-details">
+              <section><span>01</span><h4>The requirement</h4><p>Support a connected deal-to-project handoff inside a broader internal business application, without exposing private operational details.</p></section>
+              <section><span>02</span><h4>My contribution</h4><p>I contribute full-stack work across application interfaces, API integration, and database-backed features.</p></section>
+              <section><span>03</span><h4>How it connects</h4><p>The frontend captures the transition and communicates intent; backend validation protects the workflow before linked project and task records are created.</p></section>
+              <section><span>04</span><h4>Interview decision</h4><p>I can discuss why validation belongs at the API boundary: the interface can guide users, while the server remains the source of truth for every client.</p></section>
             </div>
-            <div className="stack-board" role="img" aria-label="Three connected layers of my work: interface, application and data">
-              <p>A little design. A lot of logic.</p>
-              <div className="stack-layer layer-data"><span>03</span><strong>Data</strong><small>PostgreSQL · MongoDB</small></div>
-              <div className="stack-layer layer-app"><span>02</span><strong>Application</strong><small>NestJS · APIs · Workflows</small></div>
-              <div className="stack-layer layer-interface"><span>01</span><strong>Interface</strong><small>React · Next.js</small></div>
-              <div className="stack-caption"><span>Interface / API / Data</span><b>rk.</b></div>
-            </div>
-          </div>
-          <div className="hero-index"><span>Currently at {profile.employer}</span><a href="#work">A selection of my work ↓</a></div>
+            <p className="confidential-line">Illustrative workflow with fictional records. No private source code, internal screenshots, customer data, credentials, or unapproved links are shown.</p>
+          </SpotlightCard>
         </section>
 
-        <section className="section" id="work">
-          <header className="section-heading"><p className="section-number">01 / Selected work</p><div><h2>Built across the stack.</h2><p>Public websites and independent products, followed by carefully anonymized professional work.</p></div></header>
-          <div className="project-list">{publicProjects.map((project, index) => <ProjectCard key={project.id} project={project} onOpen={setSelectedProject} featured={index === 0} />)}</div>
-          <div className="confidential-intro"><p className="eyebrow">Professional work</p><h3>Meaningful contributions,<br />responsibly presented.</h3><p>These summaries intentionally stay at a broad level. Each is draft wording for review before public publication.</p></div>
-          <div className="confidential-grid">{confidentialProjects.map(project => <ProjectCard key={project.id} project={project} onOpen={setSelectedProject} />)}</div>
-        </section>
-
-        <section className="section about" id="about">
-          <header className="section-heading"><p className="section-number">02 / About</p><div><h2>Care in the details.<br />Clarity in the whole.</h2></div></header>
-          <div className="about-grid">
-            <div className="about-statement"><p>I’m {profile.name}, an Associate Full Stack Developer at {profile.employer} I enjoy turning layered requirements into usable, organized applications—from the interface people see to the APIs and data behind it.</p><p>My approach balances technical structure with visual judgment. I value readable systems, considered interactions and work that remains clear as it grows.</p></div>
-            <aside className="education"><p className="eyebrow">Education</p><h3>Bachelor of Science<br />in Information Technology</h3><p>Vidyalankar School of Information Technology</p><dl><div><dt>Completed</dt><dd>2025</dd></div><div><dt>CGPA</dt><dd>9.30</dd></div></dl></aside>
-          </div>
-        </section>
-
-        <section className="section" id="experience">
-          <header className="section-heading"><p className="section-number">03 / Experience</p><div><h2>From learning in context<br />to owning more of the build.</h2></div></header>
-          <div className="timeline">{experience.map((item, index) => <article key={item.role} className="timeline-item"><div className="timeline-marker"><span>{String(index + 1).padStart(2, '0')}</span></div><div><p className="eyebrow">{item.period}</p><h3>{item.role}</h3><p className="company">{item.company}</p><p>{item.detail}</p></div></article>)}</div>
-        </section>
-
-        <section className="section skills-section" aria-labelledby="skills-title">
-          <header className="section-heading"><p className="section-number">04 / Technical practice</p><div><h2 id="skills-title">A versatile, practical toolkit.</h2></div></header>
-          <div className="skills-grid">{skills.map(group => <article key={group.group}><h3>{group.group}</h3><ul>{group.items.map(item => <li key={item}>{item}</li>)}</ul></article>)}</div>
-        </section>
-
-        <section className="contact" id="contact">
-          <p className="section-number">05 / Contact</p>
-          <h2>Have a thoughtful project<br />in mind? <em>Let’s talk.</em></h2>
-          <p className="contact-copy">I’m always open to a good conversation about product ideas, web experiences and full-stack work.</p>
-          <div className="contact-actions"><a className="primary-action light" href={`mailto:${profile.email}`}>Write to me <span aria-hidden="true">↗</span></a><button onClick={copyEmail} className="secondary-action" aria-live="polite">{copied ? 'Email copied' : 'Copy email'}</button></div>
-          <div className="contact-meta"><a href={resumeMailto}>Request resume ↗</a><span>{profile.location}</span><a href={`mailto:${profile.email}`}>{profile.email} ↗</a></div>
-        </section>
+        <DeveloperWorkspace email={profile.email} resumeHref={resumeMailto} copied={copied} onCopyEmail={copyEmail} />
       </main>
-      <footer><a className="wordmark" href="#top">riya kadam<span>.</span></a><p>Designed and built with care.</p><p>© {new Date().getFullYear()} {profile.shortName}</p></footer>
+      <footer><a className="wordmark" href="#top">Riya Kadam<span>.</span></a><p>Designed and built with care.</p><p>© {new Date().getFullYear()}</p></footer>
       <ProjectDialog project={selectedProject} onClose={closeDialog} />
     </>
   )

@@ -3,7 +3,7 @@ import type { Project } from '../data/portfolio'
 export function ProjectCover({ project }: { project: Project }) {
   const labels: Record<Project['cover'], string[]> = {
     nexus: ['379.8K rows', '56 features', 'Forecast'], bitewise: ['Diary', 'Hydration', 'Profiles'], web: ['Services', 'Portfolio', 'Responsive'],
-    operations: ['Interface', 'API', 'Data'], workflow: ['Attendance', 'Leave', 'Admin'], cafe: ['Customer', 'Staff', 'Connected'], heritage: ['English', 'मराठी', 'Accessible'],
+    operations: ['Interface', 'API', 'Data'], workflow: ['Attendance', 'Leave', 'Admin'], cafe: ['Customer', 'Staff', 'Connected'], heritage: ['English', 'Marathi', 'Accessible'],
   }
   return (
     <div className={`project-cover cover-${project.cover}`} aria-label={`${project.title} conceptual cover illustration`} role="img">
